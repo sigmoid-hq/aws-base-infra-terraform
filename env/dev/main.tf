@@ -22,6 +22,17 @@ module "vpc" {
 
 module "bastion" {
     source = "../../modules/ec2"
+
+    prefix = var.prefix
+    project_name = var.project_name
+    environment = var.environment
+    region = var.region
+    vpc_id = module.vpc.vpc_id
+    subnet_id = module.vpc.public_subnet_ids[0]
+    instance_type = "t3.small"
+    key_name = "ec2-kp"
+    instance_profile_name = module.iam.instance_profile_name
+    instance_name = "bastion"
 }
 
 module "s3" {
