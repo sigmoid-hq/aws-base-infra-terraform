@@ -10,9 +10,9 @@ locals {
 resource "aws_s3_bucket" "main" {
     bucket = local.main_bucket_name
 
-    tags = merge(var.tags, {
+    tags = {
         Name = local.main_bucket_name
-    })
+    }
 }
 
 # Enable bucket versioning for main bucket
@@ -40,9 +40,9 @@ resource "aws_s3_bucket_public_access_block" "main" {
 resource "aws_s3_bucket" "log" {
     bucket = local.log_bucket_name
 
-    tags = merge(var.tags, {
+    tags = {
         Name = local.log_bucket_name
-    })
+    }
 }
 
 # Enable bucket versioning for log bucket
@@ -70,9 +70,9 @@ resource "aws_s3_bucket_public_access_block" "log" {
 resource "aws_s3_bucket" "asset" {
     bucket = local.asset_bucket_name
 
-    tags = merge(var.tags, {
+    tags = {
         Name = local.asset_bucket_name
-    })
+    }
 }
 
 # Enable bucket versioning for asset bucket
@@ -87,13 +87,12 @@ resource "aws_s3_bucket_versioning" "asset" {
 
 # Block public access for asset bucket
 resource "aws_s3_bucket_public_access_block" "asset" {
-    count = var.enable_public_access ? 1 : 0
     bucket = aws_s3_bucket.asset.id
 
-    block_public_acls = true
-    block_public_policy = true
-    ignore_public_acls = true
-    restrict_public_buckets = true
+    block_public_acls = var.enable_public_access ? false : true
+    block_public_policy = var.enable_public_access ? false : true
+    ignore_public_acls = var.enable_public_access ? false : true
+    restrict_public_buckets = var.enable_public_access ? false : true
 }
 
 # Configure static website hosting for asset bucket
@@ -112,6 +111,7 @@ resource "aws_s3_bucket_website_configuration" "asset" {
 
 # CORS setting for asset bucket
 resource "aws_s3_bucket_cors_configuration" "asset" {
+    count = var.enable_public_access ? 1 : 0
     bucket = aws_s3_bucket.asset.id
 
     cors_rule {
@@ -125,6 +125,7 @@ resource "aws_s3_bucket_cors_configuration" "asset" {
 
 # Public access policy for asset bucket
 resource "aws_s3_bucket_policy" "asset" {
+    count = var.enable_public_access ? 1 : 0
     bucket = aws_s3_bucket.asset.id
 
     policy = jsonencode({
@@ -141,4 +142,27 @@ resource "aws_s3_bucket_policy" "asset" {
     })
 
     depends_on = [aws_s3_bucket_public_access_block.asset]
+}
+
+### --------------------------------------------------
+### AWS S3 Objects
+### --------------------------------------------------
+resource "aws_s3_object" "index" {
+    count = var.enable_hosting ? 1 : 0
+    bucket = aws_s3_bucket.asset.id
+    key = "index.html"
+    source = "${path.module}/static/index.html"
+    content_type = "text/html"
+
+    depends_on = [ aws_s3_bucket.asset ]
+}
+
+resource "aws_s3_object" "error" {
+    count = var.enable_hosting ? 1 : 0
+    bucket = aws_s3_bucket.asset.id
+    key = "error.html"
+    source = "${path.module}/static/error.html"
+    content_type = "text/html"
+
+    depends_on = [ aws_s3_bucket.asset ]
 }
