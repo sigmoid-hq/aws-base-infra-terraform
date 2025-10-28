@@ -12,6 +12,12 @@ module "iam" {
 
 module "vpc" {
     source = "../../modules/vpc"
+
+    prefix = var.prefix
+    project_name = var.project_name
+    environment = var.environment
+    region = var.region
+    vpc_cidr = var.vpc_cidr
 }
 
 module "bastion" {
@@ -35,10 +41,6 @@ module "s3" {
     cors_max_age_seconds = 3600
 }
 
-module "cloudfront" {
-    source = "../../modules/cloudfront"
-}
-
 module "rds" {
     source = "../../modules/rds"
 }
@@ -49,4 +51,8 @@ module "dynamodb" {
 
 module "ecs" {
     source = "../../modules/ecs"
+}
+
+module "cloudfront" {
+    source = "../../modules/cloudfront"
 }

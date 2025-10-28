@@ -14,10 +14,6 @@ module "s3" {
     source = "../../modules/s3"
 }
 
-module "cloudfront" {
-    source = "../../modules/cloudfront"
-}
-
 module "rds" {
     source = "../../modules/rds"
 }
@@ -28,4 +24,8 @@ module "dynamodb" {
 
 module "ecs" {
     source = "../../modules/ecs"
+}
+
+module "cloudfront" {
+    source = "../../modules/cloudfront"
 }
