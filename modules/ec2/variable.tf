@@ -34,8 +34,8 @@ variable "ami" {
     default = "amazon_linux_2023"
 
     validation {
-        condition = contains(["amazon_linux_2", "amazon_linux_2023", "ubuntu_24"], var.ami)
-        error_message = "AMI must be one of: amazon_linux_2, amazon_linux_2023, ubuntu_24"
+        condition = contains(["amazon_linux_2", "amazon_linux_2023"], var.ami)
+        error_message = "AMI must be one of: amazon_linux_2, amazon_linux_2023"
     }
 }
 

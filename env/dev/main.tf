@@ -8,6 +8,10 @@ locals {
 
 module "iam" {
     source = "../../modules/iam"
+
+    prefix = var.prefix
+    project_name = var.project_name
+    environment = var.environment
 }
 
 module "vpc" {
@@ -31,7 +35,7 @@ module "bastion" {
     subnet_id = module.vpc.public_subnet_ids[0]
     instance_type = "t3.small"
     key_name = "ec2-kp"
-    instance_profile_name = module.iam.instance_profile_name
+    instance_profile_name = module.iam.poweruser_instance_profile_name
     instance_name = "bastion"
 }
 

@@ -1,19 +1,13 @@
 locals {
     ami = (
-      var.ami == "amazon_linux_2"   ? data.aws_ami.amazon_linux_2.id :
-      var.ami == "amazon_linux_2023"? data.aws_ami.amazon_linux_2023.id :
-      var.ami == "ubuntu_24"         ? data.aws_ami.ubuntu_24_04.id :
+      var.ami == "amazon_linux_2"    ? data.aws_ami.amazon_linux_2.id :
+      var.ami == "amazon_linux_2023" ? data.aws_ami.amazon_linux_2023.id :
       var.ami
     )
 
-    keyfile = file("${path.module}/../../../keypair/${var.key_name}.pub")
-    
-    userdata_script = startswith(
-        var.ami,
-        "amazon"
-    ) ? "al-user-data.sh" : "ubuntu-user-data.sh"
-    
-    userdata = templatefile("${path.module}/scripts/${local.userdata_script}", {
+    keyfile = file("${path.root}/../../keypair/${var.key_name}.pub")
+
+    userdata = templatefile("${path.module}/scripts/user-data.sh", {
         ssh_port = var.ssh_port
     })
 }

@@ -26,17 +26,17 @@ if id ec2-user >/dev/null 2>&1; then
   usermod -aG docker ec2-user
 fi
 
-log "Configuring SSH to listen on port ${SSH_PORT}"
-if grep -qE "^#?Port " "${SSHD_CONFIG}"; then
-  sed -i "s/^#\?Port .*/Port ${SSH_PORT}/" "${SSHD_CONFIG}"
+log "Configuring SSH to listen on port $SSH_PORT"
+if grep -qE "^#?Port " "$SSHD_CONFIG"; then
+  sed -i "s/^#\?Port .*/Port $SSH_PORT/" "$SSHD_CONFIG"
 else
-  printf '\nPort %s\n' "${SSH_PORT}" >> "${SSHD_CONFIG}"
+  printf '\nPort %s\n' "$SSH_PORT" >> "$SSHD_CONFIG"
 fi
 
 if command -v semanage >/dev/null 2>&1 && selinuxenabled; then
   log "Updating SELinux policy for custom SSH port"
-  semanage port -a -t ssh_port_t -p tcp "${SSH_PORT}" 2>/dev/null || \
-    semanage port -m -t ssh_port_t -p tcp "${SSH_PORT}"
+  semanage port -a -t ssh_port_t -p tcp "$SSH_PORT" 2>/dev/null || \
+    semanage port -m -t ssh_port_t -p tcp "$SSH_PORT"
 fi
 
 log "Restarting SSH daemon"
