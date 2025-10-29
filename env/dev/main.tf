@@ -111,13 +111,16 @@ module "dynamodb" {
 module "ecs" {
   source = "../../modules/ecs"
 
-  region = var.region
-  account_id = data.aws_caller_identity.current.account_id
-  environment  = var.environment
-  repository_name = "sigmoid-app"
-  image_tag_mutability = "MUTABLE"
-  keep_last_n_images = 10
-  app_version = "1.0.0"
+  region                  = var.region
+  account_id              = data.aws_caller_identity.current.account_id
+  prefix                  = var.prefix
+  project_name            = var.project_name
+  environment             = var.environment
+  repository_name         = "sigmoid-app"
+  image_tag_mutability    = "MUTABLE"
+  keep_last_n_images      = 10
+  app_version             = "1.0.0"
+  task_execution_role_arn = module.iam.ecs_task_execution_role_arn
 }
 
 module "cloudfront" {

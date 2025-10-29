@@ -39,6 +39,7 @@ resource "aws_ecr_lifecycle_policy" "app" {
   })
 }
 
+# Automatically build and push the image to ECR Repository
 resource "null_resource" "build_and_push_image" {
   triggers = {
     version = var.app_version
@@ -52,4 +53,6 @@ resource "null_resource" "build_and_push_image" {
             docker push ${aws_ecr_repository.app.repository_url}:latest
         EOT
   }
+
+  depends_on = [ aws_ecr_repository.app ]
 }
