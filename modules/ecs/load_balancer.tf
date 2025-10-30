@@ -68,6 +68,15 @@ resource "aws_lb_target_group" "app" {
   vpc_id      = var.vpc_id
   target_type = "ip"
 
+  health_check {
+    path = "/health"
+    interval = 10
+    timeout = 5
+    healthy_threshold = 2
+    unhealthy_threshold = 2
+    matcher = "200-302"
+  }
+
   lifecycle {
     create_before_destroy = true
   }
