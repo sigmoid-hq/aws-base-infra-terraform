@@ -13,7 +13,7 @@ import os
 from datetime import datetime, timezone
 from typing import List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel
 
 
@@ -26,6 +26,9 @@ app = FastAPI(
     redoc_url=None,
     openapi_url="/openapi.json",
 )
+
+# Define routes on a reusable router so we can mount it twice (`/` and `/api`).
+router = APIRouter()
 
 
 class Todo(BaseModel):
@@ -53,7 +56,7 @@ def _next_todo_id() -> int:
     return max((todo.id for todo in _todos), default=0) + 1
 
 
-@app.get("/health")
+@router.get("/health")
 async def health() -> dict[str, str]:
     """
     Lightweight health check used by load balancers and observers.
@@ -68,7 +71,7 @@ async def health() -> dict[str, str]:
     }
 
 
-@app.get("/time")
+@router.get("/time")
 async def current_time() -> dict[str, str]:
     """Expose the current UTC timestamp to prove the container is alive."""
 
@@ -76,14 +79,14 @@ async def current_time() -> dict[str, str]:
     return {"timestamp": now.isoformat()}
 
 
-@app.get("/todos", response_model=list[Todo])
+@router.get("/todos", response_model=list[Todo])
 async def list_todos() -> list[Todo]:
     """Return the current in-memory todo list."""
 
     return _todos
 
 
-@app.post("/todos", response_model=Todo, status_code=201)
+@router.post("/todos", response_model=Todo, status_code=201)
 async def create_todo(payload: CreateTodoRequest) -> Todo:
     """Add a todo entry to the in-memory store."""
 
@@ -95,11 +98,17 @@ async def create_todo(payload: CreateTodoRequest) -> Todo:
     return todo
 
 
-@app.post("/echo")
+# Define remaining endpoints, then mount the router so all routes are registered.
+@router.post("/echo")
 async def echo(message: dict) -> dict:
     """Echo back arbitrary JSON payloads for quick testing."""
 
     return {"echo": message, "received_at": datetime.now(tz=timezone.utc).isoformat()}
+
+
+# Mount the router at the root and under `/api` so either path works.
+app.include_router(router)
+app.include_router(router, prefix="/api")
 
 
 if __name__ == "__main__":
