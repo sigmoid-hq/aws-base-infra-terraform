@@ -46,3 +46,6 @@ planout
 # Ignore keypair files
 keypair/*.pub
 keypair/ec2-kp
+
+# Ignore terraform plan files
+*.plan
