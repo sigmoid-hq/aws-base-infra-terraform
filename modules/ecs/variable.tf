@@ -23,6 +23,16 @@ variable "environment" {
   type        = string
 }
 
+variable "vpc_id" {
+  description = "VPC ID"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "Subnet IDs"
+  type        = list(string)
+}
+
 variable "repository_name" {
   description = "Name of the repository"
   type        = string
@@ -61,6 +71,12 @@ variable "container_insights" {
   description = "Container insights"
   type        = string
   default     = "enabled"
+}
+
+variable "desired_count" {
+  description = "Desired count"
+  type        = number
+  default     = 1
 }
 
 variable "task_execution_role_arn" {

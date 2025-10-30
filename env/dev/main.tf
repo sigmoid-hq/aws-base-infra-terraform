@@ -112,6 +112,8 @@ module "ecs" {
   source = "../../modules/ecs"
 
   region                  = var.region
+  vpc_id                  = module.vpc.vpc_id
+  subnet_ids              = module.vpc.private_subnet_ids
   account_id              = data.aws_caller_identity.current.account_id
   prefix                  = var.prefix
   project_name            = var.project_name
@@ -119,7 +121,7 @@ module "ecs" {
   repository_name         = "sigmoid-app"
   image_tag_mutability    = "MUTABLE"
   keep_last_n_images      = 10
-  app_version             = "1.0.0"
+  app_version             = "1.0.1"
   task_execution_role_arn = module.iam.ecs_task_execution_role_arn
 }
 

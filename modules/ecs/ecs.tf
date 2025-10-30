@@ -56,6 +56,8 @@ resource "aws_ecs_task_definition" "app" {
   tags = {
     Name = local.app_service_name
   }
+
+  depends_on = [aws_ecr_repository.app]
 }
 
 # CloudWatch Log Group for app
@@ -66,4 +68,35 @@ resource "aws_cloudwatch_log_group" "app" {
   tags = {
     Name = local.app_service_name
   }
+}
+
+# ECS Service for app
+resource "aws_ecs_service" "app" {
+  name             = local.app_service_name
+  cluster          = aws_ecs_cluster.main.name
+  task_definition  = aws_ecs_task_definition.app.arn
+  desired_count    = var.desired_count
+  launch_type      = "FARGATE"
+  platform_version = "LATEST"
+
+  network_configuration {
+    subnets         = var.subnet_ids
+    security_groups = [aws_security_group.service.id]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.app.arn
+    container_name   = "app"
+    container_port   = 8000
+  }
+
+  lifecycle {
+    ignore_changes = [desired_count]
+  }
+
+  tags = {
+    Name = local.app_service_name
+  }
+
+  depends_on = [aws_ecs_task_definition.app, aws_lb_target_group.app]
 }

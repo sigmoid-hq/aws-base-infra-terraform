@@ -2,7 +2,7 @@
 Example FastAPI application served behind CloudFront at the `/api` path.
 
 The container image published by the ECS module can run this module directly
-via `uvicorn modules.ecs.app.index:app`.  The endpoint selection keeps things
+via `uvicorn index:app`. The endpoint selection keeps things
 intentionally simple so teams can extend the surface without rewriting the
 entire stack.
 """
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     # Uvicorn serves the ASGI app in the container entrypoint.
     uvicorn.run(
-        "modules.ecs.app.index:app",
+        "index:app",
         host="0.0.0.0",
         port=int(os.getenv("PORT", "8000")),
         log_level="info",

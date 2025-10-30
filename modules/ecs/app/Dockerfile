@@ -14,4 +14,4 @@ COPY . /app
 
 EXPOSE ${PORT}
 
-CMD ["uvicorn", "modules.ecs.app.index:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
+CMD ["uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
