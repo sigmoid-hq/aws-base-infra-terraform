@@ -29,11 +29,6 @@ output "service_name" {
   value       = aws_ecs_service.app.name
 }
 
-output "service_arn" {
-  description = "ARN of the ECS service."
-  value       = aws_ecs_service.app.arn
-}
-
 output "service_security_group_id" {
   description = "Security group protecting the ECS tasks."
   value       = aws_security_group.service.id

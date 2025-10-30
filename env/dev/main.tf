@@ -128,4 +128,10 @@ module "ecs" {
 
 module "cloudfront" {
   source = "../../modules/cloudfront"
+
+  environment = var.environment
+
+  static_s3_domain_name      = module.s3.asset_bucket_regional_domain_name
+  api_domain_name            = module.ecs.alb_dns_name
+  api_origin_protocol_policy = "http-only"
 }
