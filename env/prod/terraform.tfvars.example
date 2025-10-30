@@ -1,0 +1,26 @@
+# Environment metadata
+environment  = "dev"
+project_name = "aws-base-infra"
+region       = "ap-northeast-2"
+prefix       = "sigmoid"
+
+# Networking
+vpc_cidr = "10.0.0.0/16"
+
+# Bastion host settings
+bastion_instance_type = "t3.small"
+bastion_key_name      = "ec2-kp"
+
+# RDS configuration
+rds_engine                 = "mysql"
+rds_engine_version         = "8.0.42"
+rds_database_name          = "sigmoid_app"
+rds_port                   = 3306
+rds_parameter_group_family = "mysql8.0"
+rds_master_password        = "example-strong-password"
+
+# ECS container registry settings
+ecs_repository_name      = "sigmoid-app"
+ecs_image_tag_mutability = "MUTABLE"
+ecs_keep_last_n_images   = 10
+ecs_app_version          = "1.0.2"
