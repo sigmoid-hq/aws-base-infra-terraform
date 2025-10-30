@@ -8,24 +8,20 @@ resource "aws_cloudfront_distribution" "main" {
 
   # S3 Static website origin
   origin {
-    domain_name = var.static_s3_domain_name
-    origin_id   = "static-site"
-
-    s3_origin_config {
-      origin_access_identity = ""
-    }
+    domain_name         = var.static_s3_domain_name
+    origin_id           = "static-site"
   }
 
   # ECS API service origin
   origin {
-    domain_name = var.api_domain_name
-    origin_id   = "api-service"
+    domain_name         = var.api_domain_name
+    origin_id           = "api-service"
 
     custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = var.api_origin_protocol_policy
-      origin_ssl_protocols   = ["TLSv1.2"]
+      http_port                = 80
+      https_port               = 443
+      origin_protocol_policy   = var.api_origin_protocol_policy
+      origin_ssl_protocols     = ["TLSv1.2"]
     }
   }
 
@@ -42,6 +38,7 @@ resource "aws_cloudfront_distribution" "main" {
 
     forwarded_values {
       query_string = false
+      headers      = []
       cookies {
         forward = "none"
       }
@@ -50,7 +47,7 @@ resource "aws_cloudfront_distribution" "main" {
 
   # API cache rule (ecs api service origin setting)
   ordered_cache_behavior {
-    path_pattern           = "/api/*"
+    path_pattern           = "api/*"
     target_origin_id       = "api-service"
     viewer_protocol_policy = "https-only"
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "PATCH", "DELETE"]
@@ -62,8 +59,9 @@ resource "aws_cloudfront_distribution" "main" {
 
     forwarded_values {
       query_string = true
+      headers      = ["Authorization"]
       cookies {
-        forward = "none"
+        forward = "all"
       }
     }
   }
