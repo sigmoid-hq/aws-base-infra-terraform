@@ -39,8 +39,8 @@ module "bastion" {
   subnet_id = module.vpc.public_subnet_ids[0]
 
   instance_name         = "bastion"
-  instance_type         = "t3.small"
-  key_name              = "ec2-kp"
+  instance_type         = var.bastion_instance_type
+  key_name              = var.bastion_key_name
   instance_profile_name = module.iam.poweruser_instance_profile_name
 }
 
@@ -76,11 +76,11 @@ module "rds" {
   vpc_cidr   = module.vpc.vpc_cidr
   subnet_ids = module.vpc.private_subnet_ids
 
-  engine         = "mysql"
-  engine_version = "8.0.42"
-  port           = 3306
+  engine         = var.rds_engine
+  engine_version = var.rds_engine_version
+  port           = var.rds_port
 
-  database_name   = "sigmoid_app"
+  database_name   = var.rds_database_name
   master_password = var.rds_master_password
 
   allow_ingress_from_vpc     = false
@@ -88,7 +88,7 @@ module "rds" {
 
   backup_window          = "03:00-04:00"
   maintenance_window     = "sun:05:00-sun:06:00"
-  parameter_group_family = "mysql8.0"
+  parameter_group_family = var.rds_parameter_group_family
 
   cloudwatch_logs_exports      = ["error", "slowquery"]
   performance_insights_enabled = false
@@ -128,10 +128,10 @@ module "ecs" {
   service_subnet_ids = module.vpc.private_subnet_ids
   alb_subnet_ids     = module.vpc.public_subnet_ids
 
-  repository_name         = "sigmoid-app"
-  image_tag_mutability    = "MUTABLE"
-  keep_last_n_images      = 10
-  app_version             = "1.0.2"
+  repository_name         = var.ecs_repository_name
+  image_tag_mutability    = var.ecs_image_tag_mutability
+  keep_last_n_images      = var.ecs_keep_last_n_images
+  app_version             = var.ecs_app_version
   task_execution_role_arn = module.iam.ecs_task_execution_role_arn
 }
 
