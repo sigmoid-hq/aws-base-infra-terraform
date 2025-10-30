@@ -28,8 +28,13 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "Subnet IDs"
+variable "service_subnet_ids" {
+  description = "Subnet IDs where ECS tasks run"
+  type        = list(string)
+}
+
+variable "alb_subnet_ids" {
+  description = "Subnet IDs used by the public ALB"
   type        = list(string)
 }
 

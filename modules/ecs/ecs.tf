@@ -80,7 +80,7 @@ resource "aws_ecs_service" "app" {
   platform_version = "LATEST"
 
   network_configuration {
-    subnets         = var.subnet_ids
+    subnets         = var.service_subnet_ids
     security_groups = [aws_security_group.service.id]
   }
 

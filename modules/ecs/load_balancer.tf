@@ -53,7 +53,7 @@ resource "aws_lb" "main" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = var.subnet_ids
+  subnets            = var.alb_subnet_ids
 
   tags = {
     Name = "app-alb-${var.environment}"
@@ -69,12 +69,12 @@ resource "aws_lb_target_group" "app" {
   target_type = "ip"
 
   health_check {
-    path = "/health"
-    interval = 10
-    timeout = 5
-    healthy_threshold = 2
+    path                = "/health"
+    interval            = 10
+    timeout             = 5
+    healthy_threshold   = 2
     unhealthy_threshold = 2
-    matcher = "200-302"
+    matcher             = "200-302"
   }
 
   lifecycle {

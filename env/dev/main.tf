@@ -113,7 +113,8 @@ module "ecs" {
 
   region                  = var.region
   vpc_id                  = module.vpc.vpc_id
-  subnet_ids              = module.vpc.private_subnet_ids
+  service_subnet_ids      = module.vpc.private_subnet_ids
+  alb_subnet_ids          = module.vpc.public_subnet_ids
   account_id              = data.aws_caller_identity.current.account_id
   prefix                  = var.prefix
   project_name            = var.project_name
